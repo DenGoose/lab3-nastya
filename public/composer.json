@@ -1,0 +1,17 @@
+{
+    "name": "den97/lab3-nastya",
+    "autoload": {
+        "psr-4": {
+            "App\\": "php_rest/app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Гусельников Денис",
+            "email": "d97510795@gmail.com"
+        }
+    ],
+    "require": {
+        "silex/silex": "~2.0"
+    }
+}
