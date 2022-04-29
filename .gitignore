@@ -26,3 +26,4 @@ pnpm-debug.log*
 /public/composer.lock
 /public/.env
 /deploy.sh
+/public/files
