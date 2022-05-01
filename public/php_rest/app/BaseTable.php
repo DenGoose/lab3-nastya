@@ -9,6 +9,8 @@ abstract class BaseTable
 {
 	abstract public static function getTableName(): string;
 
+	abstract public static function getDTO(): array;
+
 	/**
 	 * @return array{
 	 *        table: string,
@@ -39,7 +41,7 @@ abstract class BaseTable
 		return static::exec($sql, $prepare);
 	}
 
-	public static function get(array $select = [], array $filter = []): ?PDOStatement
+	public static function get(array $select = [], array $filter = [])
 	{
 		$sql = 'select ';
 		$prepare = [];
@@ -65,7 +67,8 @@ abstract class BaseTable
 					$sql .= ', ';
 				}
 			}
-		} else
+		}
+		else
 		{
 			$sql .= "*";
 		}
@@ -159,12 +162,4 @@ abstract class BaseTable
 		return $ob;
 	}
 
-	public static function getLastId(): int
-	{
-		$sql = "select id from " . static::getTableName() . " ORDER BY id DESC LIMIT 1";
-
-		$id = DB::getInstance()->getConnection()->query($sql)->fetch(\PDO::FETCH_ASSOC)['id'];
-
-		return intval($id) ?? 0;
-	}
 }
