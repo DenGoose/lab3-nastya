@@ -59,7 +59,7 @@ function addLoan(Application $app, $json): void
 				!mb_strlen(trim($json['loan_purpose'])) ||
 				!mb_strlen(trim($json['manager_comment'])) ||
 				(!mb_strlen(trim($json['loan_amount'])) || !intval($json['loan_amount'])) ||
-				(!mb_strlen(trim($json['сlient']['id'])) || !intval($json['сlient']['id']))
+				(!mb_strlen(trim($json['client']['id'])) || !intval($json['client']['id']))
 			)
 			{
 				return $app->json([
@@ -67,15 +67,34 @@ function addLoan(Application $app, $json): void
 						'error' => true,
 						'error_message' => "Не все поля заполнены"
 					]
-				])->setStatusCode(404);
+				])->setStatusCode(400);
+			}
+
+			$data = ClientsTable::get(
+				['id'],
+				[
+					'id' => $json['client']['id']
+				]
+			);
+
+			if (!isset($data->fetch(PDO::FETCH_ASSOC)['id']))
+			{
+				$clientId = $json['client']['id'];
+
+				return $app->json([
+					'error' => [
+						'error' => true,
+						'error_message' => "Клиент c id = ${clientId} не существует"
+					]
+				])->setStatusCode(400);
 			}
 
 			LoansTable::add([
-				'photo' => $json['photo'],
+				'photo' => $json['photo'], // TODO делать проверку на загруженный файл
 				'loan_purpose' => $json['loan_purpose'],
 				'manager_comment' => $json['manager_comment'],
 				'loan_amount' => $json['loan_amount'],
-				'id_client' => intval($json['сlient']['id']),
+				'id_client' => intval($json['client']['id']), //TODO Сделать проверку на существование клиента
 			]);
 
 
@@ -115,7 +134,7 @@ function deleteLoan(Application $app, $json): void
 						'error' => true,
 						'error_message' => "Пустой id"
 					]
-				])->setStatusCode(404);
+				])->setStatusCode(400);
 			}
 
 			$data = LoansTable::get(
@@ -132,7 +151,7 @@ function deleteLoan(Application $app, $json): void
 						'error' => true,
 						'error_message' => "Такого займа не существует"
 					]
-				])->setStatusCode(404);
+				])->setStatusCode(400);
 			}
 
 			LoansTable::delete(intval($json['id']));
@@ -179,15 +198,15 @@ function updateLoan(Application $app, $json): void
 						'error' => true,
 						'error_message' => "Не все поля заполнены"
 					]
-				])->setStatusCode(404);
+				])->setStatusCode(400);
 			}
 
 			LoansTable::update($json['id'], [
-				'photo' => $json['photo'],
+				'photo' => $json['photo'], // TODO делать проверку на загруженный файл
 				'loan_purpose' => $json['loan_purpose'],
 				'manager_comment' => $json['manager_comment'],
 				'loan_amount' => $json['loan_amount'],
-				'id_client' => intval($json['client']['id'])
+				'id_client' => intval($json['client']['id']) //TODO Сделать проверку на существование клиента
 			]);
 
 			return $app->json([

@@ -1,5 +1,6 @@
 <?php
-
+error_reporting(null);
+ini_set('display_errors', 0);
 if (!stristr($_SERVER['REQUEST_URI'], '/rest/'))
 {
 	include 'index.html';

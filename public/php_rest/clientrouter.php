@@ -50,7 +50,7 @@ function addClient(Application $app, $json): void
 						'error' => true,
 						'error_message' => "Не все поля заполнены"
 					]
-				])->setStatusCode(404);
+				])->setStatusCode(400);
 			}
 
 			$data = ClientsTable::get(
@@ -67,7 +67,7 @@ function addClient(Application $app, $json): void
 						'error' => true,
 						'error_message' => "Такой клиент уже существует"
 					]
-				])->setStatusCode(404);
+				])->setStatusCode(400);
 			}
 
 			ClientsTable::add(['name' => $json['name']]);
@@ -112,7 +112,7 @@ function deleteClient(Application $app, $json): void
 						'error' => true,
 						'error_message' => "Пустой id"
 					]
-				])->setStatusCode(404);
+				])->setStatusCode(400);
 			}
 
 			$data = ClientsTable::get(
@@ -129,7 +129,7 @@ function deleteClient(Application $app, $json): void
 						'error' => true,
 						'error_message' => "Такого клиента не существует"
 					]
-				])->setStatusCode(404);
+				])->setStatusCode(400);
 			}
 
 			ClientsTable::delete(intval($json['id']));
@@ -169,7 +169,7 @@ function updateClient(Application $app, $json): void
 						'error' => true,
 						'error_message' => "Пустые данные"
 					]
-				])->setStatusCode(404);
+				])->setStatusCode(400);
 			}
 
 			$data = ClientsTable::get(
@@ -186,7 +186,7 @@ function updateClient(Application $app, $json): void
 						'error' => true,
 						'error_message' => "Вы пытаетесь изменить имя на существующего пользователя"
 					]
-				])->setStatusCode(404);
+				])->setStatusCode(400);
 			}
 
 			ClientsTable::update(
