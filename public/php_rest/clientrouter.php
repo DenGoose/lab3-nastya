@@ -1,7 +1,6 @@
 <?php
 
 use App\Tables\ClientsTable;
-use App\Tables\LoansTable;
 use Silex\Application;
 
 /**
