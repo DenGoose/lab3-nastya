@@ -25,8 +25,10 @@ function getClients(Application $app, $json): void
 		} catch (Throwable $e)
 		{
 			return $app->json([
-				'error' => true,
-				'error_message' => $e->getMessage()
+				'error' => [
+					'error' => true,
+					'error_message' => $e->getMessage()
+				]
 			])->setStatusCode(500);
 		}
 	});
@@ -45,8 +47,10 @@ function addClient(Application $app, $json): void
 			if (!mb_strlen(trim($json['name'])))
 			{
 				return $app->json([
-					'error' => true,
-					'error_message' => "Не все поля заполнены"
+					'error' => [
+						'error' => true,
+						'error_message' => "Не все поля заполнены"
+					]
 				])->setStatusCode(404);
 			}
 
@@ -60,8 +64,10 @@ function addClient(Application $app, $json): void
 			if (isset($data->fetch(PDO::FETCH_ASSOC)['name']))
 			{
 				return $app->json([
-					'error' => true,
-					'error_message' => "Такой клиент уже существует"
+					'error' => [
+						'error' => true,
+						'error_message' => "Такой клиент уже существует"
+					]
 				])->setStatusCode(404);
 			}
 
@@ -80,8 +86,10 @@ function addClient(Application $app, $json): void
 		} catch (Throwable $e)
 		{
 			return $app->json([
-				'error' => true,
-				'error_message' => $e->getMessage()
+				'error' => [
+					'error' => true,
+					'error_message' => $e->getMessage()
+				]
 			])->setStatusCode(500);
 		}
 	});
@@ -101,8 +109,10 @@ function deleteClient(Application $app, $json): void
 			if (!mb_strlen(trim($json['id'])))
 			{
 				return $app->json([
-					'error' => true,
-					'error_message' => "Пустой id"
+					'error' => [
+						'error' => true,
+						'error_message' => "Пустой id"
+					]
 				])->setStatusCode(404);
 			}
 
@@ -116,22 +126,28 @@ function deleteClient(Application $app, $json): void
 			if (!isset($data->fetch(PDO::FETCH_ASSOC)['id']))
 			{
 				return $app->json([
-					'error' => true,
-					'error_message' => "Такого клиента не существует"
+					'error' => [
+						'error' => true,
+						'error_message' => "Такого клиента не существует"
+					]
 				])->setStatusCode(404);
 			}
 
 			ClientsTable::delete(intval($json['id']));
 
 			return $app->json([
-				'error' => false,
-				'error_message' => ''
+				'error' => [
+					'error' => false,
+					'error_message' => ''
+				]
 			]);
 		} catch (Throwable $e)
 		{
 			return $app->json([
-				'error' => true,
-				'error_message' => $e->getMessage()
+				'error' => [
+					'error' => true,
+					'error_message' => $e->getMessage()
+				]
 			])->setStatusCode(500);
 		}
 	});
@@ -150,8 +166,27 @@ function updateClient(Application $app, $json): void
 			if (!mb_strlen(trim($json['id'])) && !mb_strlen(trim($json['name'])))
 			{
 				return $app->json([
-					'error' => true,
-					'error_message' => "Пустые данные"
+					'error' => [
+						'error' => true,
+						'error_message' => "Пустые данные"
+					]
+				])->setStatusCode(404);
+			}
+
+			$data = ClientsTable::get(
+				['name'],
+				[
+					'name' => $json['name']
+				]
+			);
+
+			if (isset($data->fetch(PDO::FETCH_ASSOC)['name']))
+			{
+				return $app->json([
+					'error' => [
+						'error' => true,
+						'error_message' => "Вы пытаетесь изменить имя на существующего пользователя"
+					]
 				])->setStatusCode(404);
 			}
 
@@ -170,8 +205,10 @@ function updateClient(Application $app, $json): void
 		} catch (Throwable $e)
 		{
 			return $app->json([
-				'error' => true,
-				'error_message' => $e->getMessage()
+				'error' => [
+					'error' => true,
+					'error_message' => $e->getMessage()
+				]
 			])->setStatusCode(500);
 		}
 	});

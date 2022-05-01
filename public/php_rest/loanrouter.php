@@ -15,7 +15,7 @@ function getLoans(Application $app, $json): void
 		try
 		{
 			$filter = [
-				'loans.id' => $_GET['filter']['id'] ?? 0
+				'loans.id_client' => $_GET['filter']['id_client'] ?? 0 //TODO придумать альтернативу
 			];
 
 			$result = LoansTable::getDTO(
@@ -28,15 +28,17 @@ function getLoans(Application $app, $json): void
 					'CLIENTS_ID' => 'clients.id',
 					'CLIENTS_NAME' => 'clients.name'
 				],
-				$filter['loans.id'] ? $filter : []
+				$filter['loans.id_client'] ? $filter : []
 			);
 
 			return $app->json($result);
 		} catch (Throwable $e)
 		{
 			return $app->json([
-				'error' => true,
-				'error_message' => $e->getMessage()
+				'error' => [
+					'error' => true,
+					'error_message' => $e->getMessage()
+				]
 			])->setStatusCode(500);
 		}
 	});
@@ -61,8 +63,10 @@ function addLoan(Application $app, $json): void
 			)
 			{
 				return $app->json([
-					'error' => true,
-					'error_message' => "Не все поля заполнены"
+					'error' => [
+						'error' => true,
+						'error_message' => "Не все поля заполнены"
+					]
 				])->setStatusCode(404);
 			}
 
@@ -85,8 +89,10 @@ function addLoan(Application $app, $json): void
 		} catch (Throwable $e)
 		{
 			return $app->json([
-				'error' => true,
-				'error_message' => $e->getMessage()
+				'error' => [
+					'error' => true,
+					'error_message' => $e->getMessage()
+				]
 			])->setStatusCode(500);
 		}
 	});
@@ -105,8 +111,10 @@ function deleteLoan(Application $app, $json): void
 			if (!mb_strlen(trim($json['id'])))
 			{
 				return $app->json([
-					'error' => true,
-					'error_message' => "Пустой id"
+					'error'=> [
+						'error' => true,
+						'error_message' => "Пустой id"
+					]
 				])->setStatusCode(404);
 			}
 
@@ -120,22 +128,28 @@ function deleteLoan(Application $app, $json): void
 			if (!isset($data->fetch(PDO::FETCH_ASSOC)['ID']))
 			{
 				return $app->json([
-					'error' => true,
-					'error_message' => "Такого займа не существует"
+					'error' => [
+						'error' => true,
+						'error_message' => "Такого займа не существует"
+					]
 				])->setStatusCode(404);
 			}
 
 			LoansTable::delete(intval($json['id']));
 
 			return $app->json([
-				'error' => false,
-				'error_message' => ''
+				'error' => [
+					'error' => false,
+					'error_message' => ''
+				]
 			]);
 		} catch (Throwable $e)
 		{
 			return $app->json([
-				'error' => true,
-				'error_message' => $e->getMessage()
+				'error' => [
+					'error' => true,
+					'error_message' => $e->getMessage()
+				]
 			])->setStatusCode(500);
 		}
 	});
@@ -153,7 +167,7 @@ function updateLoan(Application $app, $json): void
 		try
 		{
 			if (
-				!mb_strlen(trim($json['photo'])) &&
+				!mb_strlen(trim($json['photo'])) && // TODO удалять старые файлы
 				!mb_strlen(trim($json['loan_purpose'])) &&
 				!mb_strlen(trim($json['manager_comment'])) &&
 				(!mb_strlen(trim($json['loan_amount'])) || !intval($json['loan_amount'])) &&
@@ -161,8 +175,10 @@ function updateLoan(Application $app, $json): void
 			)
 			{
 				return $app->json([
-					'error' => true,
-					'error_message' => "Не все поля заполнены"
+					'error' => [
+						'error' => true,
+						'error_message' => "Не все поля заполнены"
+					]
 				])->setStatusCode(404);
 			}
 
@@ -184,8 +200,10 @@ function updateLoan(Application $app, $json): void
 		} catch (Throwable $e)
 		{
 			return $app->json([
-				'error' => true,
-				'error_message' => $e->getMessage()
+				'error' => [
+					'error' => true,
+					'error_message' => $e->getMessage()
+				]
 			])->setStatusCode(500);
 		}
 	});

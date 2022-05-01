@@ -3,10 +3,11 @@
 use App\Tables\ClientsTable;
 use App\Tables\LoansTable;
 
-if ($_SERVER['REQUEST_URI'] == '/')
+if (!stristr($_SERVER['REQUEST_URI'], '/rest/'))
 {
 	include 'index.html';
-} elseif (stristr($_SERVER['REQUEST_URI'], '/rest/'))
+}
+else
 {
 	require_once $_SERVER['DOCUMENT_ROOT'] . "/vendor/autoload.php";
 
@@ -59,8 +60,10 @@ if ($_SERVER['REQUEST_URI'] == '/')
 		}
 
 		return $app->json([
-			'error' => true,
-			'error_message' => 'Ошибка загрузки файла'
+			'error' => [
+				'error' => true,
+				'error_message' => 'Ошибка загрузки файла'
+			]
 		])->setStatusCode(404);
 	});
 
