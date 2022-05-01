@@ -9,10 +9,15 @@
       </tr>
       </thead>
       <tbody :class="$style.body">
-        <tr v-for="(item, index) in items" :key="index">
+        <tr v-for="(item, index, type) in items" :key="index">
           <td v-for="(key, idx) in colKeys" :key="idx">
             <slot :name="key" v-bind="{ item }">
-              {{ item[key] }}
+             <div v-if="'array' ===  colTypes[idx]">
+               {{ item[key][headers[idx].field] }} ({{ item[key].id }})
+             </div>
+              <div v-else>
+                {{ item[key] }}
+              </div>
             </slot>
           </td>
         </tr>
@@ -33,6 +38,9 @@ export default {
   computed: {
     colKeys() {
       return this.headers.map(({ value }) => value);
+    },
+    colTypes() {
+      return this.headers.map(({type}) => type);
     },
   }
 }

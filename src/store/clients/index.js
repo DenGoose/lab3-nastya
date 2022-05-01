@@ -20,7 +20,7 @@ export default {
       state.items.push(item);
     },
     removeItem: (state, idRemove) => {
-      state.items = state.items.filter(({ id }) => id !== idRemove)
+      state.items = state.items.filter(({ id }) => id !== idRemove);
     },
     updateItem: (state, updateItem) => {
       const index = state.items.findIndex(item => +item.id === +updateItem.id);
@@ -31,20 +31,33 @@ export default {
     fetchItems: async ({ commit }) => {
       const response = await api.clients();
       const items = await response.json();
-      commit('setItems', items)
+      commit('setItems', items);
+    },
+    fetchFilteredItems: async ({ commit }, filter_field, filter_id) => {
+      const response = await api.clientsFiltered(filter_field, filter_id);
+      const items = await response.json();
+      commit('setItems', items);
     },
     removeItem: async ({ commit }, id) => {
-      const idRemovedItem = await api.remove( id );
-      commit('removeItem', idRemovedItem);
-
+      const response = await api.remove( id );
+      if (!response.error.error)
+        commit('removeItem', id);
+      else
+       alert(response.error.error_message)
     },
     addItem: async ({ commit }, { name }) => {
-      const item = await api.add({ name })
-      commit('setItem', item)
+      const response = await api.add({ name });
+      if (!response.error.error)
+        commit('setItem', response.item);
+      else
+        alert(response.error.error_message);
     },
     updateItem: async ({ commit }, { id, name }) => {
-      const item = await api.update({ id,name });
-      commit('updateItem', item);
+      const response = await api.update({ id,name });
+      if (!response.error.error)
+        commit('updateItem', response.item);
+      else
+        alert(response.error.error_message)
     }
   },
 }

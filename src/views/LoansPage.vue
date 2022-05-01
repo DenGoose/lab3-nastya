@@ -1,6 +1,6 @@
 <template>
   <Layout title="Кредиты">
-    <LoansList :client_id="client_id" />
+    <LoansList :filter_field="filter_field" :filter_id="filter_id" />
   </Layout>
 </template>
 
@@ -15,7 +15,8 @@ export default {
     LoansList,
   },
   props: {
-    client_id: Number,
+    filter_field: String,
+    filter_id: Number,
   }
 }
 </script>

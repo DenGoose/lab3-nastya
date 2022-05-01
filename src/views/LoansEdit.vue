@@ -7,9 +7,10 @@
 <script>
 import { useStore } from 'vuex';
 
-import { updateItem, addItem } from '@/store/loans/selectors';
+import { updateLoansItem, addLoansItem } from '@/store/loans/selectors';
 import LoansForm from '@/components/LoansForm/LoansForm';
 import Layout from '@/components/Layout/Layout';
+
 
 export default {
   name: 'LoansEdit',
@@ -23,9 +24,7 @@ export default {
   setup() {
     const store = useStore();
     return {
-      onSubmit: ({ id, photo, loan_purpose, manager_comment, loan_amount, id_client }) => id ?
-          updateItem(store, { id, photo, loan_purpose, manager_comment, loan_amount, id_client }) :
-          addItem(store, { photo, loan_purpose, manager_comment, loan_amount, id_client } )
+      onSubmit: (form) => form.id ? updateLoansItem(store, form) : addLoansItem(store, form )
     }
   }
 

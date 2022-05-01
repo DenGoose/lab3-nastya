@@ -4,10 +4,10 @@
       :headers="[
         {value: 'id', text: 'ID'},
         {value: 'photo', text: 'Фотография'},
-        {value: 'loan_purpose', text: 'Цель кредитап'},
+        {value: 'loan_purpose', text: 'Цель кредита'},
         {value: 'manager_comment', text: 'Комментарий'},
         {value: 'loan_amount', text: 'Сумма кредита'},
-        {value: 'id_client', text: 'ID клиента'},
+        {value: 'client', text: 'Клиент', type: 'array', field: 'name'},
         {value: 'control', text: 'Действие'},
       ]"
       :items="items"
@@ -28,7 +28,7 @@ import { useStore } from 'vuex';
 import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
-import {selectItems, removeItem, fetchItems, selectSortItems, fetchSortedItems} from '@/store/loans/selectors';
+import {selectLoansItems, removeLoansItem, fetchLoansItems, fetchLoansFilteredItems} from '@/store/loans/selectors';
 import Table from '@/components/Table/Table';
 import Btn from '@/components/Btn/Btn';
 
@@ -39,20 +39,21 @@ export default {
     Btn,
   },
   props: {
-    client_id: Number,
+    filter_field: String,
+    filter_id: Number,
   },
   setup(props) {
     const store = useStore();
     const router = useRouter();
     onMounted(() => {
-      !!(props.client_id) ? fetchSortedItems(store)  : fetchItems(store);
+      !!(props.filter_id) ? fetchLoansFilteredItems(store, props.filter_field, props.filter_id.toString())  : fetchLoansItems(store);
     });
     return {
-      items: computed(() => !!(props.client_id) ? selectSortItems(store, props.client_id) : selectItems(store)),
+      items: computed(() => selectLoansItems(store)),
       onClickRemove: id => {
         const isConfirmRemove = confirm('Вы действительно хотите удалить запись?')
         if (isConfirmRemove) {
-          removeItem(store, id)
+          removeLoansItem(store, id)
         }
       },
       onClickEdit: id => {

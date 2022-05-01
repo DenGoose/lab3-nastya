@@ -5,6 +5,8 @@
   </div>
   <router-view/>
 </template>
+<script>
+</script>
 <style lang="scss">
 body {
   margin: 0;

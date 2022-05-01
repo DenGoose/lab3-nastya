@@ -1,7 +1,7 @@
 <template>
   <select v-model="selected" :class="$style.root">
-    <option v-for="(value, key) in list" :key="key" :value="key" >
-      {{ value }}
+    <option v-for="item in list" :key="item.id" :value="item.id" >
+      {{ item[listField] }}
     </option>
   </select>
 </template>
@@ -13,7 +13,8 @@ export default {
   name: 'Select',
   props: {
     list: Array,
-    selectID: Number
+    selectID: Number,
+    listField: String,
   },
   setup (props, { emit }) {
     const selected = ref(props.selectID);

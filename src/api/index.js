@@ -1,18 +1,17 @@
+
 class Api {
   constructor() {
-    this.base = '/rest';
+    this.base = 'http://lab3-nastya.serdcebolit.ru/rest';
   }
 
   request = async (method, options) => {
     const url = this.base + method;
-    return fetch(url, options)
+    return fetch(url, {...options, mode: 'cors'});
   }
 
   rest = async (method, options) => {
     return this.request(method, options)
-      .then((data) => data);
+        .then((data) => data)
   }
-
 }
-
 export default Api;

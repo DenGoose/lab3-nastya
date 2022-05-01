@@ -23,7 +23,7 @@ import { computed, reactive, onBeforeMount, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
-import { selectItemById, fetchItems } from '@/store/clients/selectors';
+import { selectClientsItemById, fetchClientsItems } from '@/store/clients/selectors';
 import Btn from '@/components/Btn/Btn';
 export default {
   name: 'ClientsForm',
@@ -42,11 +42,11 @@ export default {
     });
 
     onBeforeMount(() => {
-      fetchItems(store);
+      fetchClientsItems(store);
     });
 
     watchEffect(() => {
-      const client = selectItemById( store,  props.id );
+      const client = selectClientsItemById( store,  props.id );
       Object.keys(client).forEach(key => {
         form[key] = client[key]
       })

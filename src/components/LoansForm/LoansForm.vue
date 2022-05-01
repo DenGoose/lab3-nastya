@@ -35,15 +35,12 @@
         <label for="id_client">ID клиента</label>
       </div>
       <Select
-          v-model="form.id_client"
+          v-model="form.client.id"
           :class="$style.select"
           name="id_client" id="id_client"
-          :selectID="form.id_client"
-          :list="{
-            1: 'Ледванова Анастасия Юрьевна',
-            2: 'Щедрин Александр Владиславович',
-            3: 'Гусельников Денис Денисович',
-            4: 'Зенин Максим Максимович'}"
+          :selectID="form.client.id"
+          :list="clientsList"
+          :list-field="'name'"
       ></Select>
     </div>
     <div :class="$style.item">
@@ -53,13 +50,16 @@
 </template>
 
 <script>
-import { computed, reactive, onBeforeMount, watchEffect } from 'vue';
-import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import {computed, onBeforeMount, reactive, ref, watchEffect} from 'vue';
+import {useStore} from 'vuex';
+import {useRouter} from 'vue-router';
 
-import { selectItemById, fetchItems } from '@/store/loans/selectors';
+import {fetchLoansItems, selectLoansItemById} from '@/store/loans/selectors';
+import {fetchUploadFiles, selectUploadFiles} from "@/store/files/selectors";
+
 import Btn from '@/components/Btn/Btn';
 import Select from "@/components/Select/Select";
+import {selectClientsItems} from "@/store/clients/selectors";
 
 export default {
   name: 'LoansForm',
@@ -79,33 +79,53 @@ export default {
       loan_purpose: '',
       manager_comment: '',
       loan_amount: '',
-      id_client: '',
+      client:  {
+        id: '',
+        name: '',
+      },
     });
-
+    const fileData = ref('');
     onBeforeMount(() => {
-      fetchItems(store);
+      fetchLoansItems(store);
     });
 
     watchEffect(() => {
-      const loan = selectItemById( store,  props.id );
+      const loan = selectLoansItemById( store,  props.id );
       Object.keys(loan).forEach(key => {
-        form[key] = loan[key]
+        form[key] = loan[key];
       })
     });
 
     const isValidForm = computed(() => {
       for (const [key, value] of Object.entries(form))
-        if (key !== 'id' && !(value)) return false
+        if (key !== 'id' && !(value)) return false;
       return true
     });
+
+    async function uploadFile() {
+      const res = await fetchUploadFiles(store, fileData.value);
+      const file = await selectUploadFiles(store);
+      return file;
+    }
 
     return {
       form,
       isValidForm,
-      previewFiles: (e) => {form[`${e.target.id}`] = `/assets/images/${e.target.files[0].name}`;},
-      onClick: () => {
-        context.emit('submit', form);
-        router.push({ name: 'Loans' })
+      clientsList: computed(() => selectClientsItems(store)),
+      previewFiles: (e) => {
+        fileData.value = e.target.files[0];
+        form[`${e.target.id}`] = `${e.target.files[0].name}`;
+        },
+      fileData,
+      onClick: async () => {
+        const file = await uploadFile().then((response) => {
+          return {...response}
+        });
+        if (file.file_path) {
+          form.photo = file.file_path;
+          context.emit('submit', form);
+          await router.push({name: 'Loans'})
+        }
       }
     }
   },

@@ -1,39 +1,34 @@
-export const fetchItems = ( store ) => {
+export const fetchLoansItems = ( store ) => {
   const { dispatch } = store;
   dispatch('loans/fetchItems');
 };
 
-export const fetchSortedItems = ( store ) => {
+export const fetchLoansFilteredItems = ( store, filter_field, filter_id ) => {
   const { dispatch } = store;
-  dispatch('loans/fetchSortedItems');
+  dispatch('loans/fetchFilteredItems', {filter_field: filter_field, filter_id: filter_id});
 };
 
-export const selectSortItems = ( store, client_id = 0 ) => {
+export const selectLoansItems = ( store) => {
   const { getters } = store;
   return  getters['loans/items'];
 }
 
-export const selectItems = ( store) => {
-  const { getters } = store;
-  return  getters['loans/items'];
-}
-
-export const removeItem = ( store, id ) => {
+export const removeLoansItem = ( store, id ) => {
   const { dispatch } = store;
   dispatch('loans/removeItem', id);
 }
 
-export const addItem = ( store, { photo, loan_purpose, manager_comment, loan_amount, id_client } ) => {
+export const addLoansItem = ( store, loan ) => {
   const { dispatch } = store;
-  dispatch('loans/addItem', { photo, loan_purpose, manager_comment, loan_amount, id_client });
+  dispatch('loans/addItem', loan);
 }
 
-export const updateItem = ( store, { id, photo, loan_purpose, manager_comment, loan_amount, id_client }) => {
+export const updateLoansItem = ( store, loan) => {
   const { dispatch } = store;
-  dispatch('loans/updateItem', { id, photo, loan_purpose, manager_comment, loan_amount, id_client });
+  dispatch('loans/updateItem', loan);
 }
 
-export const selectItemById = (store, id) => {
+export const selectLoansItemById = (store, id) => {
   const { getters } = store;
   return getters['loans/itemsByKey'][id] || {};
 }

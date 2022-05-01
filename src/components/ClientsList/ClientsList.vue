@@ -25,7 +25,7 @@ import { useStore } from 'vuex';
 import { computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { selectItems, removeItem, fetchItems  } from '@/store/clients/selectors'
+import { selectClientsItems, removeClientsItem, fetchClientsItems  } from '@/store/clients/selectors'
 import Table from '@/components/Table/Table';
 import Btn from '@/components/Btn/Btn';
 export default {
@@ -38,21 +38,21 @@ export default {
     const store = useStore();
     const router = useRouter();
     onMounted(() => {
-      fetchItems(store);
+      fetchClientsItems(store);
     });
     return {
-      items: computed(() => selectItems(store)),
+      items: computed(() => selectClientsItems(store)),
       onClickRemove: id => {
         const isConfirmRemove = confirm('Вы действительно хотите удалить запись?')
         if (isConfirmRemove) {
-          removeItem(store, id)
+          removeClientsItem(store, id)
         }
       },
       onClickEdit: ( id ) => {
         router.push({ name: 'ClientsEdit', params: { id } })
       },
       onClickLoans: (client_id) => {
-        router.push({ name: 'LoansSorted', params: { client_id } })
+        router.push({ name: 'LoansFiltered', params: { filter_field: "id_client", filter_id: client_id } })
       }
     }
   },

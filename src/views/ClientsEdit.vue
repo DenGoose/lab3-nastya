@@ -10,7 +10,7 @@
 <script>
 import { useStore } from 'vuex';
 
-import { updateItem, addItem } from '@/store/clients/selectors';
+import { updateClientsItem, addClientsItem } from '@/store/clients/selectors';
 import Layout from '@/components/Layout/Layout';
 import ClientsForm from '@/components/ClientsForm/ClientsForm';
 export default {
@@ -26,8 +26,8 @@ export default {
     const store = useStore();
     return {
       onSubmit: ({ id, name }) => id ?
-          updateItem(store, { id, name }) :
-          addItem(store, { name }),
+          updateClientsItem(store, { id, name }) :
+          addClientsItem(store, { name }),
     };
   }
 }

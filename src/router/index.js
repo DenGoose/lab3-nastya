@@ -7,11 +7,12 @@ const routes = [
     component: () => import('@/views/LoansPage')
   },
   {
-    path: '/loans/sorted/:client_id?',
-    name: 'LoansSorted',
+    path: '/loans/filtered/:filter_field?:filter_id?',
+    name: 'LoansFiltered',
     props: (route) => {
       return {
-        client_id: route.params.client_id,
+        filter_field: route.params.filter_field,
+        filter_id: route.params.filter_id,
       }
     },
     component: () => import('@/views/LoansPage')

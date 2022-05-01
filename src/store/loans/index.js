@@ -33,22 +33,31 @@ export default {
       const items = await response.json();
       commit('setItems', items)
     },
-    fetchSortedItems: async ({ commit }) => {
-      const response = await api.loansSorted();
+    fetchFilteredItems: async ({ commit }, {filter_field, filter_id}) => {
+      const response = await api.loansFiltered(filter_field, filter_id);
       const items = await response.json();
       commit('setItems', items)
     },
     removeItem: async ({ commit }, id) => {
-      const idRemovedItem = await api.remove( id );
-      commit('removeItem', idRemovedItem);
+      const response = await api.remove( id );
+      if (!response.error.error)
+        commit('removeItem', id);
+      else
+        alert(response.error.error_massage);
     },
-    addItem: async ({ commit }, { photo, loan_purpose, manager_comment, loan_amount, id_client }) => {
-      const item = await api.add({ photo, loan_purpose, manager_comment, loan_amount, id_client });
-      commit('addItem', item);
+    addItem: async ({ commit }, loan) => {
+      const response = await api.add(loan);
+      if (!response.error.error)
+        commit('addItem', response.item);
+      else
+        alert(response.error.error_message);
     },
-    updateItem: async ({ commit }, { id, photo, loan_purpose, manager_comment, loan_amount, id_client }) => {
-      const item = await api.update({ id, photo, loan_purpose, manager_comment, loan_amount, id_client });
-      commit('updateItem', item);
+    updateItem: async ({ commit }, loan) => {
+      const response = await api.update(loan);
+      if (!response.error.error)
+        commit('updateItem', response.item);
+      else
+        alert(response.error.error_massage);
     }
   },
 }
