@@ -14,9 +14,12 @@ function getLoans(Application $app, $json): void
 	{
 		try
 		{
-			$filter = [
-				'loans.id_client' => $_GET['filter']['id_client'] ?? 0 //TODO придумать альтернативу
-			];
+			$filter = [];
+
+			foreach ($_GET['filter'] as $key => $value)
+			{
+				$filter['loans.' . $key] = $value;
+			}
 
 			$result = LoansTable::getDTO(
 				[
@@ -28,7 +31,7 @@ function getLoans(Application $app, $json): void
 					'CLIENTS_ID' => 'clients.id',
 					'CLIENTS_NAME' => 'clients.name'
 				],
-				$filter['loans.id_client'] ? $filter : []
+				$filter ?? []
 			);
 
 			return $app->json($result);
@@ -202,7 +205,7 @@ function updateLoan(Application $app, $json): void
 		{
 			if (
 				!mb_strlen(trim($json['id'])) &&
-				!mb_strlen(trim($json['photo'])) && // TODO удалять старые файлы
+				!mb_strlen(trim($json['photo'])) &&
 				!mb_strlen(trim($json['loan_purpose'])) &&
 				!mb_strlen(trim($json['manager_comment'])) &&
 				(!mb_strlen(trim($json['loan_amount'])) || !intval($json['loan_amount'])) &&
@@ -240,11 +243,11 @@ function updateLoan(Application $app, $json): void
 			}
 
 			LoansTable::update($json['id'], [
-				'photo' => $json['photo'], // TODO делать проверку на загруженный файл
+				'photo' => $json['photo'],
 				'loan_purpose' => $json['loan_purpose'],
 				'manager_comment' => $json['manager_comment'],
 				'loan_amount' => $json['loan_amount'],
-				'id_client' => intval($json['client']['id']) //TODO Сделать проверку на существование клиента
+				'id_client' => intval($json['client']['id'])
 			]);
 
 			return $app->json([
