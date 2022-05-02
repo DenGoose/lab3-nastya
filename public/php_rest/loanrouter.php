@@ -89,12 +89,22 @@ function addLoan(Application $app, $json): void
 				])->setStatusCode(400);
 			}
 
+			if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $json['photo']))
+			{
+				return $app->json([
+					'error' => [
+						'error' => true,
+						'error_message' => "Файл не загружен"
+					]
+				])->setStatusCode(400);
+			}
+
 			LoansTable::add([
-				'photo' => $json['photo'], // TODO делать проверку на загруженный файл
+				'photo' => $json['photo'],
 				'loan_purpose' => $json['loan_purpose'],
 				'manager_comment' => $json['manager_comment'],
 				'loan_amount' => $json['loan_amount'],
-				'id_client' => intval($json['client']['id']), //TODO Сделать проверку на существование клиента
+				'id_client' => intval($json['client']['id']),
 			]);
 
 
@@ -138,13 +148,13 @@ function deleteLoan(Application $app, $json): void
 			}
 
 			$data = LoansTable::get(
-				['ID' => 'loans.id'],
+				['ID' => 'loans.id', 'FILE' => 'loans.photo'],
 				[
 					'loans.id' => $json['id']
 				]
-			);
+			)->fetch(PDO::FETCH_ASSOC);
 
-			if (!isset($data->fetch(PDO::FETCH_ASSOC)['ID']))
+			if (!isset($data['ID']))
 			{
 				return $app->json([
 					'error' => [
@@ -155,6 +165,11 @@ function deleteLoan(Application $app, $json): void
 			}
 
 			LoansTable::delete(intval($json['id']));
+
+			if (file_exists($_SERVER['DOCUMENT_ROOT'] . $data['FILE']))
+			{
+				unlink($_SERVER['DOCUMENT_ROOT'] . $data['FILE']);
+			}
 
 			return $app->json([
 				'error' => [
@@ -186,6 +201,7 @@ function updateLoan(Application $app, $json): void
 		try
 		{
 			if (
+				!mb_strlen(trim($json['id'])) &&
 				!mb_strlen(trim($json['photo'])) && // TODO удалять старые файлы
 				!mb_strlen(trim($json['loan_purpose'])) &&
 				!mb_strlen(trim($json['manager_comment'])) &&
@@ -199,6 +215,28 @@ function updateLoan(Application $app, $json): void
 						'error_message' => "Не все поля заполнены"
 					]
 				])->setStatusCode(400);
+			}
+
+			$data = LoansTable::get(
+				['ID' => 'loans.id'],
+				[
+					'loans.id' => $json['id']
+				]
+			);
+
+			if (!isset($data->fetch(PDO::FETCH_ASSOC)['ID']))
+			{
+				return $app->json([
+					'error' => [
+						'error' => true,
+						'error_message' => "Вы пытаетесь изменить не существующий займ"
+					]
+				])->setStatusCode(400);
+			}
+
+			if (file_exists($_SERVER['DOCUMENT_ROOT'] . $json['photo']))
+			{
+				unlink($_SERVER['DOCUMENT_ROOT'] . $json['photo']);
 			}
 
 			LoansTable::update($json['id'], [

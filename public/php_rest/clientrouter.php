@@ -124,10 +124,12 @@ function deleteClient(Application $app, $json): void
 
 			if (!isset($data->fetch(PDO::FETCH_ASSOC)['id']))
 			{
+				$clientId = $json['id'];
+
 				return $app->json([
 					'error' => [
 						'error' => true,
-						'error_message' => "Такого клиента не существует"
+						'error_message' => "Клиент c id = ${clientId} не существует"
 					]
 				])->setStatusCode(400);
 			}
