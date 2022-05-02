@@ -2,7 +2,6 @@
   <Layout :title="id ? 'Редактирование записи' : 'Создание записи'">
     <ClientsForm
         :id="id"
-        @submit="onSubmit"
     />
   </Layout>
 </template>
@@ -23,12 +22,6 @@ export default {
     ClientsForm,
   },
   setup() {
-    const store = useStore();
-    return {
-      onSubmit: ({ id, name }) => id ?
-          updateClientsItem(store, { id, name }) :
-          addClientsItem(store, { name }),
-    };
   }
 }
 </script>

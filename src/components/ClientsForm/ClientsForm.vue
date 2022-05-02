@@ -23,7 +23,7 @@ import { computed, reactive, onBeforeMount, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
-import { selectClientsItemById, fetchClientsItems } from '@/store/clients/selectors';
+import {selectClientsItemById, fetchClientsItems, updateClientsItem, addClientsItem} from '@/store/clients/selectors';
 import Btn from '@/components/Btn/Btn';
 export default {
   name: 'ClientsForm',
@@ -52,12 +52,18 @@ export default {
       })
     });
 
+    async function makeQuery(id, name) {
+      const res = id ? await updateClientsItem(store, { id, name }) : await  addClientsItem(store,{ name })
+      return res;
+    }
+
     return {
       form,
       isValidForm: computed(() =>  !!(form.name)),
-      onClick: () => {
-        context.emit('submit', form);
-        router.push({ name: 'Clients' })
+      onClick:  async () => {
+        const res = await makeQuery(form.id, form.name);
+        if (!res.error.error)
+          await router.push({name: 'Clients'})
       },
     }
 

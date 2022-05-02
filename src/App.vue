@@ -1,13 +1,19 @@
 <template>
   <div id="nav">
-    <RouterLink :to="{ name: 'Clients' }">Клиенты</RouterLink>
-    <RouterLink :to="{ name: 'Loans' }">Кредиты</RouterLink>
+    <router-link :to="{name: 'Clients'}">Клиенты</router-link>
+    <router-link :to="{name: 'Loans',  params: { filter_field: '', filter_id: '' } }">Кредиты</router-link>
   </div>
-  <router-view/>
+  <div class="main">
+    <div class="container">
+      <router-view :key="$route.fullPath"/>
+    </div>
+  </div>
 </template>
 <script>
 </script>
 <style lang="scss">
+
+
 body {
   margin: 0;
 }
@@ -33,5 +39,15 @@ body {
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+.main {
+
+}
+.container {
+  width: 100%;
+  max-width: 1220px;
+  height: 100%;
+  margin: 0 auto;
 }
 </style>
