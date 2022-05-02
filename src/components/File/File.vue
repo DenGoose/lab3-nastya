@@ -46,7 +46,7 @@ export default {
     const previewPhoto = ref('')
     watchEffect(() => {
       if (props.value !== '' && previewPhoto.value === '')
-        previewPhoto.value = 'https://guselnikov.ivsand.ru' + props.value;
+        previewPhoto.value = '' + props.value;
     })
     function previewFiles(e) {
       if (e.target.files[0]) {

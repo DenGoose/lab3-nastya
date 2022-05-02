@@ -1,7 +1,7 @@
 
 class Api {
   constructor() {
-    this.base = 'https://guselnikov.ivsand.ru/rest';
+    this.base = '/rest';
   }
 
   request = async (method, options) => {

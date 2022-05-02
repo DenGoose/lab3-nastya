@@ -1,6 +1,6 @@
 <template>
   <div class="image" :style="{width: width + 'px', height: height + 'px'}">
-    <img v-show="photo" class="image__photo" :src="photo" :alt="alt">
+    <img v-if="photo" class="image__photo" :src="photo" :alt="alt">
   </div>
 </template>
 <script>

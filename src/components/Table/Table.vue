@@ -17,7 +17,7 @@
               </div>
               <div v-else-if="'photo' ===  colTypes[idx]" :class="$style.photo">
                 <v-image
-                    :photo="'https://guselnikov.ivsand.ru' + item[key]"
+                    :photo="'' + item[key]"
                     :alt="'Фото'"
                 />
               </div>
