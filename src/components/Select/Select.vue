@@ -13,7 +13,7 @@ export default {
   name: 'Select',
   props: {
     list: Array,
-    selectID: Number,
+    selectID: String | Number,
     listField: String,
   },
   setup (props, { emit }) {

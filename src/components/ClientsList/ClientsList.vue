@@ -52,7 +52,7 @@ export default {
         router.push({ name: 'ClientsEdit', params: { id } })
       },
       onClickLoans: (client_id) => {
-        router.push({ name: 'LoansFiltered', params: { filter_field: "id_client", filter_id: client_id } })
+        router.push({name: 'Loans', params: { filter_field: 'id_client', filter_id: client_id }})
       }
     }
   },

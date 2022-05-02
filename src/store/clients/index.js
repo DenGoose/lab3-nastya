@@ -51,6 +51,7 @@ export default {
         commit('setItem', response.item);
       else
         alert(response.error.error_message);
+      return response;
     },
     updateItem: async ({ commit }, { id, name }) => {
       const response = await api.update({ id,name });
@@ -58,6 +59,7 @@ export default {
         commit('updateItem', response.item);
       else
         alert(response.error.error_message)
+      return response;
     }
   },
 }

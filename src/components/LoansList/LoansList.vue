@@ -2,13 +2,13 @@
   <div :class="$style.root">
     <Table
       :headers="[
-        {value: 'id', text: 'ID'},
-        {value: 'photo', text: 'Фотография'},
-        {value: 'loan_purpose', text: 'Цель кредита'},
-        {value: 'manager_comment', text: 'Комментарий'},
-        {value: 'loan_amount', text: 'Сумма кредита'},
+        {value: 'id', text: 'ID', type: 'text'},
+        {value: 'photo', text: 'Фотография', type: 'photo'},
+        {value: 'loan_purpose', text: 'Цель кредита', type: 'text'},
+        {value: 'manager_comment', text: 'Комментарий', type: 'text'},
+        {value: 'loan_amount', text: 'Сумма кредита', type: 'text'},
         {value: 'client', text: 'Клиент', type: 'array', field: 'name'},
-        {value: 'control', text: 'Действие'},
+        {value: 'control', text: 'Действие', type: 'text'},
       ]"
       :items="items"
     >
@@ -25,7 +25,7 @@
 
 <script>
 import { useStore } from 'vuex';
-import { computed, onMounted } from 'vue';
+import {computed, onBeforeMount, onMounted} from 'vue';
 import { useRouter } from 'vue-router';
 
 import {selectLoansItems, removeLoansItem, fetchLoansItems, fetchLoansFilteredItems} from '@/store/loans/selectors';
@@ -40,12 +40,12 @@ export default {
   },
   props: {
     filter_field: String,
-    filter_id: Number,
+    filter_id: String,
   },
   setup(props) {
     const store = useStore();
     const router = useRouter();
-    onMounted(() => {
+    onBeforeMount(() => {
       !!(props.filter_id) ? fetchLoansFilteredItems(store, props.filter_field, props.filter_id.toString())  : fetchLoansItems(store);
     });
     return {
@@ -57,7 +57,7 @@ export default {
         }
       },
       onClickEdit: id => {
-        router.push({ name: 'LoansEdit', params: { id } })
+        router.push({ name: 'LoansEdit', params: { id: id }})
       }
     }
   }

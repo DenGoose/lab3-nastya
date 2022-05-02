@@ -7,10 +7,14 @@
       <input v-model="form.id" disabled :class="$style.input"  id="id" placeholder="id" type="text">
     </div>
     <div :class="$style.item">
-      <div :class="$style.label">
-        <label for="photo">Фотография</label>
-      </div>
-      <input @change="previewFiles" :class="$style.input"  id="photo" placeholder="Фотография" type="file">
+      <VFile
+          :title="'Фотография'"
+          :placeholder="'Фотография'"
+          :name="'photo'"
+          :value="form.photo"
+          @changeFile="previewFiles"
+          @clear="clearFile"
+      />
     </div>
     <div :class="$style.item">
       <div :class="$style.label">
@@ -28,7 +32,7 @@
       <div :class="$style.label">
         <label for="loan_amount">Сумма кредита</label>
       </div>
-      <input v-model="form.loan_amount" :class="$style.input"  id="loan_amount" placeholder="Сумма кредита" type="text">
+      <input v-model="form.loan_amount" :class="$style.input"  id="loan_amount" placeholder="Сумма кредита" type="number">
     </div>
     <div :class="$style.item">
       <div :class="$style.label">
@@ -44,22 +48,25 @@
       ></Select>
     </div>
     <div :class="$style.item">
-      <Btn @click="onClick" :disabled="!isValidForm" theme="info">Сохранить</Btn>
+      <Btn @click="onClick" :disabled="!isValidForm || uploadWait" theme="info">Сохранить</Btn>
+      <img :class="$style.uploadImage" :style="{transform: 'rotate(' + angle +  'deg)'}" v-if="uploadWait" src="@/assets/images/loading_icon_149916.svg" alt="">
     </div>
   </div>
 </template>
 
 <script>
-import {computed, onBeforeMount, reactive, ref, watchEffect} from 'vue';
+import {computed, onBeforeMount, onBeforeUnmount, reactive, ref, watchEffect} from 'vue';
 import {useStore} from 'vuex';
 import {useRouter} from 'vue-router';
 
-import {fetchLoansItems, selectLoansItemById} from '@/store/loans/selectors';
+import {addLoansItem, fetchLoansItems, selectLoansItemById, updateLoansItem} from '@/store/loans/selectors';
 import {fetchUploadFiles, selectUploadFiles} from "@/store/files/selectors";
 
 import Btn from '@/components/Btn/Btn';
 import Select from "@/components/Select/Select";
-import {selectClientsItems} from "@/store/clients/selectors";
+import {fetchClientsItems, selectClientsItems} from "@/store/clients/selectors";
+import VFile from "@/components/File/File";
+import router from "@/router";
 
 export default {
   name: 'LoansForm',
@@ -67,12 +74,12 @@ export default {
     id: { type: String, default: '' },
   },
   components: {
+    VFile,
     Select,
     Btn,
   },
   setup(props, context) {
     const store = useStore();
-    const router = useRouter();
     const form = reactive({
       id: '',
       photo: '',
@@ -85,20 +92,33 @@ export default {
       },
     });
     const fileData = ref('');
+    const angle = ref(0);
+    let timer = ref();
     onBeforeMount(() => {
       fetchLoansItems(store);
+      fetchClientsItems(store);
+      if (uploadWait)
+        timer =  setInterval(rotateImage, 100);
     });
 
     watchEffect(() => {
-      const loan = selectLoansItemById( store,  props.id );
+      const loan =  selectLoansItemById( store,  props.id );
       Object.keys(loan).forEach(key => {
         form[key] = loan[key];
       })
     });
 
+    onBeforeUnmount( () => {
+      clearInterval(timer);
+    })
+
     const isValidForm = computed(() => {
       for (const [key, value] of Object.entries(form))
+      {
+        if (typeof value == 'object' && !(value.id)) return false
         if (key !== 'id' && !(value)) return false;
+      }
+
       return true
     });
 
@@ -108,24 +128,51 @@ export default {
       return file;
     }
 
+    async function makeQuery(form) {
+      const res = form.id ? await updateLoansItem(store, form) : await addLoansItem(store, form);
+      return res;
+    }
+
+    let uploadWait = ref(false);
+
+    function rotateImage() {
+      angle.value += 45;
+      if (angle.value >= 360)
+        angle.value = 0;
+    }
+
+    const formPhoto = form.photo;
     return {
       form,
       isValidForm,
+      formPhoto,
+      uploadWait,
+      angle,
       clientsList: computed(() => selectClientsItems(store)),
       previewFiles: (e) => {
         fileData.value = e.target.files[0];
         form[`${e.target.id}`] = `${e.target.files[0].name}`;
         },
+      clearFile: (e) => {
+        form.photo = "";
+      },
       fileData,
       onClick: async () => {
-        const file = await uploadFile().then((response) => {
-          return {...response}
-        });
-        if (file.file_path) {
-          form.photo = file.file_path;
-          context.emit('submit', form);
-          await router.push({name: 'Loans'})
+        if (formPhoto !== form.photo) {
+          uploadWait.value = true;
+          const file = await uploadFile().then((response) => {
+            return {...response};
+          });
+          uploadWait.value = false;
+          if (file.file_path) {
+            form.photo = file.file_path;
+            const result = await makeQuery(form).then(() => router.push({name: 'Loans'}))
+          }
         }
+        else {
+          const result = await makeQuery(form).then(() => router.push({name: 'Loans'}))
+        }
+
       }
     }
   },
@@ -140,9 +187,11 @@ export default {
   .item {
     display: flex;
     align-items: center;
-
     & + .item {
       margin-top: 15px;
+    }
+    &>*:not(:last-child) {
+      margin-right: 5px;
     }
   }
 
@@ -180,6 +229,9 @@ export default {
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
     appearance: none;
+  }
+
+  .uploadImage {
   }
 }
 </style>

@@ -12,9 +12,15 @@
         <tr v-for="(item, index, type) in items" :key="index">
           <td v-for="(key, idx) in colKeys" :key="idx">
             <slot :name="key" v-bind="{ item }">
-             <div v-if="'array' ===  colTypes[idx]">
-               {{ item[key][headers[idx].field] }} ({{ item[key].id }})
-             </div>
+               <div v-if="'array' ===  colTypes[idx]">
+                {{ item[key][headers[idx].field] }} ({{ item[key].id }})
+              </div>
+              <div v-else-if="'photo' ===  colTypes[idx]" :class="$style.photo">
+                <v-image
+                    :photo="'https://guselnikov.ivsand.ru' + item[key]"
+                    :alt="'Фото'"
+                />
+              </div>
               <div v-else>
                 {{ item[key] }}
               </div>
@@ -23,14 +29,18 @@
         </tr>
       </tbody>
     </table>
+    <div v-else :class="[$style.message, $style.message_error]">
+      <span>Элементов не найдено</span>
+    </div>
   </div>
 </template>
 
 <script>
 import Btn from "@/components/Btn/Btn";
+import VImage from "@/components/Image/Image";
 export default {
   name: 'Table',
-  components: {Btn},
+  components: {VImage, Btn},
   props: {
     items: Array,
     headers: Array,
@@ -48,7 +58,6 @@ export default {
 
 <style module lang="scss">
 .root {
-  max-width: 900px;
   .table {
     width: 100%;
     border-collapse: collapse;
@@ -62,6 +71,16 @@ export default {
     }
   }
   .head {
+  }
+  .message {
+    display: flex;
+    width: 100%;
+    padding: 10px;
+    border-radius: 3px;
+    &.message_error {
+      background-color: #f8d7da;
+      color: #881c59;
+    }
   }
 }
 

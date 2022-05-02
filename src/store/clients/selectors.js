@@ -20,12 +20,12 @@ export const removeClientsItem = (store, id) => {
 
 export const addClientsItem = (store, { name }) => {
   const { dispatch } = store;
-  dispatch('clients/addItem', { name });
+  return dispatch('clients/addItem', { name });
 }
 
 export const updateClientsItem = (store, { id, name }) => {
   const { dispatch } = store;
-  dispatch('clients/updateItem', { id, name });
+  return dispatch('clients/updateItem', { id, name });
 }
 
 export const selectClientsItemById = (store, id) => {

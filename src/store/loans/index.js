@@ -31,31 +31,31 @@ export default {
     fetchItems: async ({ commit }) => {
       const response = await api.loans();
       const items = await response.json();
-      commit('setItems', items)
+      await commit('setItems', items)
     },
     fetchFilteredItems: async ({ commit }, {filter_field, filter_id}) => {
       const response = await api.loansFiltered(filter_field, filter_id);
       const items = await response.json();
-      commit('setItems', items)
+      await commit('setItems', items)
     },
     removeItem: async ({ commit }, id) => {
       const response = await api.remove( id );
       if (!response.error.error)
-        commit('removeItem', id);
+        await commit('removeItem', id);
       else
         alert(response.error.error_massage);
     },
     addItem: async ({ commit }, loan) => {
       const response = await api.add(loan);
       if (!response.error.error)
-        commit('addItem', response.item);
+        await commit('addItem', response.item);
       else
         alert(response.error.error_message);
     },
     updateItem: async ({ commit }, loan) => {
       const response = await api.update(loan);
       if (!response.error.error)
-        commit('updateItem', response.item);
+        await commit('updateItem', response.item);
       else
         alert(response.error.error_massage);
     }

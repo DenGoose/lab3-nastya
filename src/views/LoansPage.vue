@@ -16,7 +16,7 @@ export default {
   },
   props: {
     filter_field: String,
-    filter_id: Number,
+    filter_id: String,
   }
 }
 </script>

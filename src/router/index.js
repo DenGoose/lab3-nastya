@@ -2,8 +2,14 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
-    path: '/loans/',
+    path: '/loans/:filter_field?:filter_id?',
     name: 'Loans',
+    props: (route) => {
+      return {
+        filter_field: route.params.filter_field,
+        filter_id: route.params.filter_id,
+      }
+    },
     component: () => import('@/views/LoansPage')
   },
   {
