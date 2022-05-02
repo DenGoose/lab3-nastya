@@ -157,7 +157,7 @@ function deleteLoan(Application $app, $json): void
 				]
 			)->fetch(PDO::FETCH_ASSOC);
 
-			if (!isset($data['ID']))
+			if (!isset($data['ID']) && $data['ID'])
 			{
 				return $app->json([
 					'error' => [
@@ -221,13 +221,13 @@ function updateLoan(Application $app, $json): void
 			}
 
 			$data = LoansTable::get(
-				['ID' => 'loans.id'],
+				['ID' => 'loans.id', 'FILE' => 'loans.photo'],
 				[
 					'loans.id' => $json['id']
 				]
-			);
+			)->fetch(PDO::FETCH_ASSOC);
 
-			if (!isset($data->fetch(PDO::FETCH_ASSOC)['ID']))
+			if (!isset($data['ID']) && $data['ID'])
 			{
 				return $app->json([
 					'error' => [
@@ -237,9 +237,9 @@ function updateLoan(Application $app, $json): void
 				])->setStatusCode(400);
 			}
 
-			if (file_exists($_SERVER['DOCUMENT_ROOT'] . $json['photo']))
+			if (file_exists($_SERVER['DOCUMENT_ROOT'] . $data['FILE']))
 			{
-				unlink($_SERVER['DOCUMENT_ROOT'] . $json['photo']);
+				unlink($_SERVER['DOCUMENT_ROOT'] . $data['FILE']);
 			}
 
 			LoansTable::update($json['id'], [
