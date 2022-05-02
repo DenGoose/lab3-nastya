@@ -112,7 +112,7 @@ function addLoan(Application $app, $json): void
 
 
 			return $app->json([
-				'items' => LoansTable::getLastItem(),
+				'item' => LoansTable::getLastItem(),
 				'error' => [
 					'error' => false,
 					'error_message' => '',
