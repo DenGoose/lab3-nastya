@@ -43,9 +43,9 @@ export default {
   setup(props, context) {
     let originFile = props.value;
     const fileInput = ref(null);
-    const previewPhoto = ref('https://guselnikov.ivsand.ru')
+    const previewPhoto = ref('')
     watchEffect(() => {
-      if (previewPhoto.value === 'https://guselnikov.ivsand.ru')
+      if (props.value !== '' && previewPhoto.value === '')
         previewPhoto.value = 'https://guselnikov.ivsand.ru' + props.value;
     })
     function previewFiles(e) {
@@ -60,7 +60,7 @@ export default {
     function clearFile() {
       console.log(originFile)
       fileInput.value.value = '';
-      previewPhoto.value = null;
+      previewPhoto.value = '';
       context.emit('clear', 'true');
     }
     return {
