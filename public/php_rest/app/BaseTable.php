@@ -41,7 +41,7 @@ abstract class BaseTable
 		return static::exec($sql, $prepare);
 	}
 
-	public static function get(array $select = [], array $filter = [])
+	public static function get(array $select = [], array $filter = [], array $order = [])
 	{
 		$sql = 'select ';
 		$prepare = [];
@@ -94,6 +94,18 @@ abstract class BaseTable
 
 				$sql .= "${column} = ${temp}";
 			}
+		}
+
+		if ($order)
+		{
+			$sql .= " order by ";
+			$orders = [];
+			foreach ($order as $key => $value)
+			{
+				$orders[] = "${key} ${value}";
+			}
+
+			$sql .= implode(', ', $orders);
 		}
 
 		return static::exec($sql, $prepare);

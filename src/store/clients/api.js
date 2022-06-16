@@ -11,7 +11,7 @@ class Clients extends Api {
     'Content-Type': 'application/json',
   });
 
-  clientsFiltered = (filter_field, filter_id) => this.rest(`/clients/get-list.json?filter[${filter_field}=${filter_id}]`, {
+  clientsFiltered = (filter_field, filter_id) => this.rest(`/clients/get-list.json?filter[${filter_field}]=${filter_id}`, {
     method: 'GET',
     'Content-Type': 'application/json',
   });

@@ -41,6 +41,6 @@ function uploadFile(Application $app): void
 				'error' => true,
 				'error_message' => 'Ошибка загрузки файла'
 			]
-		])->setStatusCode(415);
+		])->setStatusCode(404);
 	});
 }

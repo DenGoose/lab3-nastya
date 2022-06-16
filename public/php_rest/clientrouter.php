@@ -26,7 +26,9 @@ function getClients(Application $app, $json): void
 			return $app->json([
 				'error' => [
 					'error' => true,
-					'error_message' => $e->getMessage()
+					'error_message' => $e->getMessage(),
+					'error_file' => $e->getFile() . ':' . $e->getLine(),
+					'error_trace' => $e->getTraceAsString(),
 				]
 			])->setStatusCode(500);
 		}

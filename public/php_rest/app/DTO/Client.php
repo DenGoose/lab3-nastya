@@ -11,7 +11,7 @@ class Client
 
 	public function __construct(
 		?int $id = null,
-		?string $name = null,
+		?string $name = null
 	)
 	{
 		$this->id = $id;

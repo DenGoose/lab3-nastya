@@ -22,7 +22,7 @@ class ClientsTable extends \App\BaseTable
 	{
 		$result = [];
 
-		$ob = parent::get(['id', 'name'], $filter);
+		$ob = parent::get(['id', 'name'], $filter, ['name' => 'ASC']);
 
 		while ($itm = $ob->fetch(\PDO::FETCH_ASSOC))
 		{
